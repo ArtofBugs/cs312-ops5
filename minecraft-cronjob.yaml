@@ -1,0 +1,27 @@
+# Conceptual architecture of the Backup CronJob
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minecraft-backup
+spec:
+  schedule: "0 0 * * *" # Daily at midnight
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup-worker
+            image: amazon/aws-cli:latest # Inherently has AWS CLI
+            command: ["/bin/sh", "-c"]
+            args:
+              - tar -czf /tmp/world-backup.tar.gz /data/world && 
+                aws s3 cp /tmp/world-backup.tar.gz s3://your-bucket-name/backups/
+            volumeMounts:
+            - name: minecraft-data
+              mountPath: /data
+              readOnly: true
+          volumes:
+          - name: minecraft-data
+            persistentVolumeClaim:
+              claimName: minecraft-pvc
+          restartPolicy: OnFailure
