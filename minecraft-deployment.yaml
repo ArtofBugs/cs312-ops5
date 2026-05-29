@@ -6,6 +6,8 @@ metadata:
     app: minecraft
 spec:
   replicas: 1
+  strategy:
+    type: Recreate # CRITICAL: Releases PVC lock before creating the new pod during upgrades
   selector:
     matchLabels:
       app: minecraft
@@ -16,12 +18,38 @@ spec:
     spec:
       containers:
         - name: minecraft
-          image: wengor-minecraft:v3
+          # TODO: Replace with your actual full AWS ECR registry path
+          image: 964324548466.dkr.ecr.us-east-1.amazonaws.com/ops3-ecr/v2.0.2
+          imagePullPolicy: IfNotPresent
           env:
             - name: MOTD
               value: wengor-ops4
           ports:
             - containerPort: 25565
+          # Resource constraints (Required by rubric)
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "3Gi"
+              cpu: "2"
+
+          # Startup probe: 30 attempts * 10s = 5 minutes max initialization window
+          startupProbe:
+            tcpSocket:
+              port: 25565
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 30
+
+          # Liveness probe: Only checks after startupProbe succeeds
+          livenessProbe:
+            tcpSocket:
+              port: 25565
+            periodSeconds: 20
+            failureThreshold: 3
+
           volumeMounts:
             - name: minecraft-data
               mountPath: /opt/minecraft/world
