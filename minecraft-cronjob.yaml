@@ -11,16 +11,13 @@ spec:
         spec:
           containers:
           - name: backup-worker
-            image: amazon/aws-cli:latest # Inherently has AWS CLI
+            image: alpine:latest
             command: ["/bin/sh", "-c"]
             args:
-            - |
-              echo "Installing tar utility..."
-              yum install -y tar && \
-              echo "Creating archive..." && \
-              tar -czf /tmp/world-backup.tar.gz -C /opt/minecraft/world . && \
-              echo "Uploading to S3..." && \
-              aws s3 cp /tmp/world-backup.tar.gz s3://cs312-wengor-minecraft-backups/backups/
+              - |
+                apk add --no-cache tar aws-cli && \
+                tar -czf /tmp/world-backup.tar.gz -C /opt/minecraft/world . && \
+                aws s3 cp /tmp/world-backup.tar.gz s3://cs312-wengor-minecraft-backups/backups/
             volumeMounts:
             - name: minecraft-data
               mountPath: /opt/minecraft/world
