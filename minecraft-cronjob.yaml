@@ -15,7 +15,7 @@ spec:
             command: ["/bin/sh", "-c"]
             args:
               - tar -czf /tmp/world-backup.tar.gz /opt/minecraft/world && 
-                aws s3 cp /tmp/world-backup.tar.gz s3:///cs312-wengor-minecraft-backups/backups/
+                aws s3 cp /tmp/world-backup.tar.gz s3://cs312-wengor-minecraft-backups/backups/
             volumeMounts:
             - name: minecraft-data
               mountPath: /opt/minecraft/world
