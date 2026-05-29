@@ -9,4 +9,4 @@ spec:
   resources:
     requests:
       # instance size for t3.large is 20Gi
-      storage: 20Gi
+      storage: 10Gi
