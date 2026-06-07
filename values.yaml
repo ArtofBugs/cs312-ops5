@@ -1,0 +1,13 @@
+# values.yaml
+grafana:
+  service:
+    type: NodePort
+    nodePort: 31000
+  sidecar:
+    image:
+      tag: 1.28.0
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
