@@ -20,23 +20,31 @@
       args:
         creates: /usr/local/bin/k3s # Prevents rerun if k3s is already installed
 
-    # Helm installation steps taken from class lab
-    # https://cs312.alexulbrich.com/labs/observability-workshop/#deploying-the-monitoring-stack
-    - name: Download and run Helm installation script
-      shell: |
-        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-      args:
-        creates: /usr/local/bin/helm # Prevents rerun if helm is already installed
-    - name: Add values.yaml file
-      copy:
-        src: values.yaml
-        dest: /home/ubuntu/values.yaml
-        owner: ubuntu
-        group: ubuntu
-    - name: Add Helm repository + install monitoring stack
-      shell: |
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
-        helm repo update && \
-        helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f /home/ubuntu/values.yaml
+    # Install Helm, Prometheus, and Grafana
+    # Based on installation we used in lab
+    - name: Add Prometheus community Helm repository
+      kubernetes.core.helm_repository:
+        name: prometheus-community
+        repo_url: "https://prometheus-community.github.io/helm-charts"
+
+    - name: Idempotent deployment of kube-prometheus-stack
+      kubernetes.core.helm:
+        name: monitoring
+        chart_ref: prometheus-community/kube-prometheus-stack
+        release_namespace: default
+        state: present # <-- This ensures it installs if missing, or upgrades only if values change
+        wait: true
+        values:
+          grafana:
+            service:
+              type: NodePort
+              nodePort: 31000
+            sidecar:
+              image:
+                tag: "1.28.0"
+          prometheus:
+            prometheusSpec:
+              serviceMonitorSelectorNilUsesHelmValues: false
+              ruleSelectorNilUsesHelmValues: false
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
