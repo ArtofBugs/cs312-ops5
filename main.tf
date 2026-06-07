@@ -109,6 +109,12 @@ resource "aws_instance" "ops5_minecraft_node" {
   iam_instance_profile   = "LabInstanceProfile"
   subnet_id = aws_subnet.ops5_public.id
 
+  root_block_device {
+    volume_size           = 20     # Size in GB (Adjust this number as needed)
+    volume_type           = "gp3"  # General Purpose SSD (gp3 is newer/cheaper than gp2)
+    delete_on_termination = true   # Automatically clean up the disk if the EC2 is destroyed
+  }
+
   tags = {
     Name = "ops5-minecraft-node"
   }
