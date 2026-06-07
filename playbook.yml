@@ -27,10 +27,16 @@
         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       args:
         creates: /usr/local/bin/helm # Prevents rerun if helm is already installed
+    - name: Add values.yaml file
+      copy:
+        src: values.yaml
+        dest: /home/ubuntu/values.yaml
+        owner: ubuntu
+        group: ubuntu
     - name: Add Helm repository + install monitoring stack
       shell: |
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
         helm repo update && \
-        helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f values.yaml
+        helm install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f /home/ubuntu/values.yaml
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
