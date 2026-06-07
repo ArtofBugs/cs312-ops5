@@ -86,6 +86,14 @@ resource "aws_security_group" "ops5_minecraft_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Grafana"
+    from_port   = 31000
+    to_port     = 31000
+    protocol    = "tcp"
+    cidr_blocks = ["${var.grafana_allowed_ip}"]
+  }
+
   egress {
     description = "Allow all egress"
     from_port   = 0

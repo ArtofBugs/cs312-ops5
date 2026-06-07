@@ -45,3 +45,9 @@ variable "repo_name" {
   type = string
   default = "ops3-minecraft"
 }
+
+variable "grafana_allowed_ip" {
+  description = "IP allowed to access Grafana dashboard"
+  type = string
+  default = ""
+}
