@@ -21,4 +21,4 @@ fi
 chown -R minecraft:minecraft /opt/minecraft
 
 # Run the server! Use gosu to do it as the minecraft user
-exec gosu minecraft java -Xms4G -Xmx4G -jar paper.jar nogui
+exec gosu minecraft java -Xms4G -Xmx4G --motd "${MOTD:-Default MOTD}" -jar paper.jar nogui
