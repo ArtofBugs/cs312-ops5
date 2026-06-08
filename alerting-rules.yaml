@@ -10,8 +10,7 @@ spec:
     - name: minecraft.rules
       rules:
         - alert: PodCrashLooping
-          # It can take a long time for a single loop to happen, sometimes upward of 2 minutes in a simple OOM scenario. So these are set to high numbers.
-          expr: increase(kube_pod_container_status_restarts_total{namespace="default"}[10m]) > 3
+          expr: increase(kube_pod_container_status_restarts_total{namespace="default"}[4m]) > 2
           for: 1m
           labels:
             severity: critical
@@ -30,16 +29,13 @@ spec:
             runbook: |
               See the Alert 2 runbook in the Ops 5 document.
 
-        - alert: MinecraftStatusUnhealthyOrMissing
-          expr: |
-            (minecraft_status_healthy{namespace="default", condition="true"} == 0)
-            OR
-            (absent(minecraft_status_healthy{namespace="default", condition="true"}) == 1)
-          for: 1m
+        - alert: MinecraftStatusUnhealthy
+          expr: minecraft_status_healthy{} == 0
+          for: 2m
           labels:
-            severity: warning
+            severity: critical
           annotations:
-            summary: "Minecraft server is unhealthy or metrics are missing"
+            summary: "Minecraft server is unhealthy"
             runbook: |
               See the Alert 3 runbook in the Ops 5 document.
 
