@@ -46,5 +46,6 @@
             prometheusSpec:
               serviceMonitorSelectorNilUsesHelmValues: false
               ruleSelectorNilUsesHelmValues: false
+              retentionSize: "3GiB"
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
