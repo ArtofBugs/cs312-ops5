@@ -17,10 +17,7 @@ spec:
           annotations:
             summary: "Pod {{ $labels.pod }} is crash looping"
             runbook: |
-              1. Run: kubectl describe pod {{ $labels.pod }} -n {{ $labels.namespace }}
-              2. Check Events section for error messages
-              3. Check logs: kubectl logs {{ $labels.pod }} --previous
-              4. If bad image, rollback: kubectl rollout undo deployment/<name>
+              See the Alert 1 runbook in the Ops 5 document.
 
         - alert: HighNodeCPU
           expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
@@ -30,10 +27,7 @@ spec:
           annotations:
             summary: "Node CPU usage above 80% for 2 minutes"
             runbook: |
-              1. Run: kubectl top pods --all-namespaces --sort-by=cpu
-              2. Identify the Pod consuming the most CPU
-              3. Check if it is expected (build, migration) or unexpected (infinite loop)
-              4. If unexpected, check resource limits and consider scaling
+              See the Alert 2 runbook in the Ops 5 document.
 
         - alert: MinecraftStatusUnhealthy
           expr: minecraft_status_healthy{namespace="default", condition="true"} == 0
