@@ -69,7 +69,7 @@ spec:
               mountPath: /opt/minecraft/world
         - name: mc-monitor-exporter
           image: itzg/mc-monitor:latest
-          command: ["/app/mc-monitor", "export-for-prometheus"]
+          command: ["/mc-monitor", "export-for-prometheus"]
           env:
             - name: MC_HOST
               value: "localhost" # Scrapes the local container over shared pod network
