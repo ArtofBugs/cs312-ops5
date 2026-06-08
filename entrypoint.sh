@@ -12,8 +12,8 @@ if [ ! -f server.properties ]; then
     echo "motd=${MOTD:-Default MOTD}" > server.properties
     echo "enable-query=true" >> server.properties
 else
-    sed -i "/^motd=/c\motd=${MOTD:-Default MOTD}" server.properties
-    sed -i "/^enable-query=/c\enable-query=true" server.properties
+    sed -i "s/^motd=.*/motd=${MOTD:-Default MOTD}/" server.properties
+    sed -i "s/^enable-query=.*/enable-query=true/" server.properties
 fi
 
 # This ensures that even if 'mc_data' was mounted as root,
