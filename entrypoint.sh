@@ -10,7 +10,7 @@ echo "eula=true" > eula.txt
 # If the file already exists, replace the motd value with the value of the variable using sed.
 if [ ! -f server.properties ]; then
     echo "motd=${MOTD:-Default MOTD}" > server.properties
-    echo "enable-query=true" > server.properties
+    echo "enable-query=true" >> server.properties
 else
     sed -i "/^motd=/c\motd=${MOTD:-Default MOTD}" server.properties
     sed -i "/^enable-query=/c\enable-query=true" server.properties
