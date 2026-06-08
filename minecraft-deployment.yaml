@@ -15,6 +15,10 @@ spec:
     metadata:
       labels:
         app: minecraft
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: minecraft
@@ -63,6 +67,26 @@ spec:
           volumeMounts:
             - name: minecraft-data
               mountPath: /opt/minecraft/world
+        - name: mc-monitor-exporter
+          image: itzg/mc-monitor:latest
+          command: ["/app/mc-monitor", "export-for-prometheus"]
+          env:
+            - name: MC_HOST
+              value: "localhost" # Scrapes the local container over shared pod network
+            - name: MC_PORT
+              value: "25565"
+            - name: EXPORT_PORT
+              value: "8080" # The port Prometheus will query
+          ports:
+            - containerPort: 8080
+              name: metrics
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: 100m
+            requests:
+              memory: 32Mi
+              cpu: 50m
       volumes:
         - name: minecraft-data
           persistentVolumeClaim:

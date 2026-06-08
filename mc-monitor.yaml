@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: minecraft-monitor
+  labels:
+    release: monitoring # This label must match your Helm release name so Prometheus picks it up
+spec:
+  selector:
+    matchLabels:
+      app: minecraft
+  podMetricsEndpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s # Defensive scrape interval for a small single-node lab
